@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Car Market</string>
+    <string name="choose_a_manufacturer">Choose a manufacturer:</string>
+    <string name="choose_year">Choose year</string>
+    <string name="choose_model">Choose model</string>
+    <string name="find">Find</string>
+</resources>
