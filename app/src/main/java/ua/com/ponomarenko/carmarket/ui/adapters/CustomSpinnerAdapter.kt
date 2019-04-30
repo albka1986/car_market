@@ -12,7 +12,7 @@ import ua.com.ponomarenko.carmarket.R
 /**
  * Created by Ponomarenko Oleh on 4/29/2019.
  */
-class CustomSpinnerAdapter(context: Context, private val list: Map<String, String>?)
+class CustomSpinnerAdapter(private val context: Context, private val list: Map<String, String>?)
     : BaseAdapter() {
 
     private var keys: Array<String>? = list?.keys?.toTypedArray()
@@ -26,7 +26,6 @@ class CustomSpinnerAdapter(context: Context, private val list: Map<String, Strin
             currentConvertView = layoutInflater.inflate(R.layout.spinner_item_white, parent, false)
             viewHolder = ViewHolder(currentConvertView)
             currentConvertView.tag = viewHolder
-
 
         } else {
             viewHolder = currentConvertView.tag as ViewHolder
