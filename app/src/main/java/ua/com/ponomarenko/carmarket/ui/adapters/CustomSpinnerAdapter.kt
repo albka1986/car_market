@@ -22,9 +22,8 @@ class CustomSpinnerAdapter(context: Context, private val list: Map<String, Strin
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val viewHolder: ViewHolder
         var currentConvertView = convertView
-        val layout = if (position % 2 == 0) R.layout.spinner_item_grey else R.layout.spinner_item_white
         if (currentConvertView == null) {
-            currentConvertView = layoutInflater.inflate(layout, parent, false)
+            currentConvertView = layoutInflater.inflate(R.layout.spinner_item_white, parent, false)
             viewHolder = ViewHolder(currentConvertView)
             currentConvertView.tag = viewHolder
 

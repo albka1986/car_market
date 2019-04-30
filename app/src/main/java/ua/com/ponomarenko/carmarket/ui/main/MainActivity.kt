@@ -1,6 +1,5 @@
 package ua.com.ponomarenko.carmarket.ui.main
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -17,6 +16,10 @@ import ua.com.ponomarenko.carmarket.internal.toast
 import ua.com.ponomarenko.carmarket.ui.adapters.CustomSpinnerAdapter
 import ua.com.ponomarenko.carmarket.ui.base.ScopedActivity
 
+const val KEY_MANUFACTURER = "Manufacturer"
+const val KEY_TYPE = "Type"
+const val KEY_YEAR = "BuiltYear"
+
 class MainActivity : ScopedActivity(), KodeinAware {
 
     override val kodein by closestKodein()
@@ -24,6 +27,9 @@ class MainActivity : ScopedActivity(), KodeinAware {
     private val mainViewModelFactory: MainViewModelFactory by instance()
 
     private var currentManufacturer: String? = null
+    private var selectedManufacturerPosition: Int? = null
+    private var selectedTypePosition: Int? = null
+    private var selectedYearPosition: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +38,27 @@ class MainActivity : ScopedActivity(), KodeinAware {
         bindUI()
     }
 
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_MANUFACTURER, manufacturer_spinner.selectedItemPosition)
+        outState.putInt(KEY_TYPE, type_spinner.selectedItemPosition)
+        outState.putInt(KEY_YEAR, year_spinner.selectedItemPosition)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.let {
+            selectedManufacturerPosition = it.getInt(KEY_MANUFACTURER)
+            selectedTypePosition = it.getInt(KEY_TYPE)
+            selectedYearPosition = it.getInt(KEY_YEAR)
+        }
+    }
+
+
     private fun bindUI() = launch(Dispatchers.Main) {
         val manufacturers = viewModel.manufacturers.await()
-        manufacturers.observe(this@MainActivity, Observer {
-            if (it == null) return@Observer
-            initManufacturerSpinner(it)
-        })
+        initManufacturerSpinner(manufacturers.value)
     }
 
     private fun loadModels(manufacturer: String?) = launch(Dispatchers.Main) {
@@ -60,6 +81,7 @@ class MainActivity : ScopedActivity(), KodeinAware {
                 currentManufacturer = key
             }
         }
+        selectedManufacturerPosition?.let { manufacturer_spinner.setSelection(it) }
     }
 
     private fun initTypeSpinner(types: Map<String, String>?) {
@@ -77,6 +99,7 @@ class MainActivity : ScopedActivity(), KodeinAware {
                 loadYears(currentManufacturer, keyType)
             }
         }
+        selectedTypePosition?.let { type_spinner.setSelection(it) }
     }
 
     private fun loadYears(manufacturer: String?, type: String?) = launch(Dispatchers.Main) {
@@ -88,8 +111,15 @@ class MainActivity : ScopedActivity(), KodeinAware {
 
     private fun initBuiltYeatsSpinner(builtYears: Map<String, String>?) {
         year_spinner.adapter = CustomSpinnerAdapter(this, builtYears)
+        selectedYearPosition?.let { year_spinner.setSelection(it) }
+        clearSavedData()
     }
 
+    private fun clearSavedData() {
+        selectedManufacturerPosition = null
+        selectedTypePosition = null
+        selectedYearPosition = null
+    }
 
 
 }
